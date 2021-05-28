@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BankAccountApi.Entities
 {
@@ -18,6 +18,7 @@ namespace BankAccountApi.Entities
         public DateTime CreatedDate { get; set; }
         [Required]
         public DateTime ModifiedDate { get; set; }
+        public ICollection<BankAccount> BankAccounts { get; set; }
         
     }
 }

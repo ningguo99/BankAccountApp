@@ -25,7 +25,6 @@ namespace BankAccountApi.Controllers
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             _logger.LogInformation("Hello from the Get() method!");
-            _logger.LogError("wcnm");
             var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
