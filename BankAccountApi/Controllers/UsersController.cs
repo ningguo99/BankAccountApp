@@ -1,39 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BankAccountApi.Data;
 using BankAccountApi.DTOs;
 using BankAccountApi.Entities;
-using Microsoft.AspNetCore.Http;
+using BankAccountApi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BankAccountApi.Controllers
 {
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context;
-        private readonly ILogger<UsersController> _logger;
-        public UsersController(DataContext context, ILogger<UsersController> logger)
+        private readonly IUserRepository _userRepository;
+        public UsersController(IUserRepository userRepository)
         {
-            _logger = logger;
-            _context = context;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            _logger.LogInformation("Hello from the Get() method!");
-            var users = await _context.Users.ToListAsync();
-            return Ok(users);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            return Ok(user);
+            var appUsers = await _userRepository.GetUsersAsync();
+            return Ok(appUsers);
         }
 
         [HttpPost]
@@ -41,11 +28,17 @@ namespace BankAccountApi.Controllers
         {
             // check if the user is an admin
             Request.Headers.TryGetValue("Username", out var username);
-            if (username != "Admin") return Unauthorized("Only admin can create a user");
+            if (username != "Admin")
+                return Unauthorized("Only admin can create a user");
+
+            // check if the username already exists in the db
+            if (await _userRepository.UsernameExists(createUserDto.Username))
+                return BadRequest("Username is taken");
 
             // construct appUser from createUserDto
             var currentTime = DateTime.Now;
-            var appUser = new AppUser{
+            var appUser = new AppUser
+            {
                 Username = createUserDto.Username,
                 FirstName = createUserDto.FirstName,
                 LastName = createUserDto.LastName,
@@ -53,8 +46,7 @@ namespace BankAccountApi.Controllers
                 ModifiedDate = currentTime
             };
 
-            await _context.Users.AddAsync(appUser);
-            var success = await _context.SaveChangesAsync() > 0;
+            var success = await _userRepository.CreateAsync(appUser);
             if (success)
             {
                 return Ok(appUser);

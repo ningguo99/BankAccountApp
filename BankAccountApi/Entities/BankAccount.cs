@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BankAccountApi.Entities
 {
-    [Table("Photos")]
+    [Table("BankAccounts")]
     public class BankAccount
     {
         public int Id { get; set; }

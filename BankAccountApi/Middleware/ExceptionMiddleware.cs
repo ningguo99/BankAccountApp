@@ -30,13 +30,15 @@ namespace BankAccountApi.Middleware
             catch (Exception ex)
             {
                 // in case of any unhandled exception, respond with 500 Status code and an ApiException as response body
-                _logger.LogError(ex, ex.Message);
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
                 ? new ApiException(((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds(), ex.Message, ex.StackTrace)
                 : new ApiException(((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds(), "Internal Server Error");
+
+                // store the ReferenceNumber in error log
+                _logger.LogError(ex, response.ReferenceNumber.ToString());
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
