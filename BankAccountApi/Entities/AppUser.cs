@@ -15,9 +15,9 @@ namespace BankAccountApi.Entities
         [Required]
         public string LastName { get; set; }
         [Required]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         [Required]
-        public DateTime ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public ICollection<BankAccount> BankAccounts { get; set; }
         
     }

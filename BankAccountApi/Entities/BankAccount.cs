@@ -13,7 +13,7 @@ namespace BankAccountApi.Entities
         public string AccountNumber { get; set; }
         [Required]
         [Range(0, double.MaxValue)]
-        public int Balance { get; set; }
+        public int Balance { get; set; } = 0;
         public AppUser Owner { get; set; }
         public int AppUserId { get; set; }
     }
