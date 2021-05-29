@@ -13,8 +13,8 @@ namespace BankAccountApi.Data
         public UserRepository(DataContext context)
         {
             _context = context;
-
         }
+
         public async Task<bool> CreateAsync(AppUser appUser)
         {
             _context.Entry(appUser).State = EntityState.Added;
@@ -29,8 +29,7 @@ namespace BankAccountApi.Data
 
         public async Task<bool> UsernameExists(string username)
         {
-            return await _context.AppUsers.AnyAsync(x =>
-            string.Equals(x.Username, username, StringComparison.OrdinalIgnoreCase));
+            return await _context.AppUsers.AnyAsync(x => x.Username == username.ToLower());
         }
     }
 }
