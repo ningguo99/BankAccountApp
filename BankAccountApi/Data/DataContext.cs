@@ -11,5 +11,6 @@ namespace BankAccountApi.Data
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
     }
 }
