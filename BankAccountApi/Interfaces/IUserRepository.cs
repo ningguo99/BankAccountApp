@@ -7,6 +7,7 @@ namespace BankAccountApi.Interfaces
     public interface IUserRepository
     {
         Task<bool> CreateAsync(AppUser appUser);
+        Task<bool> UpdateAsync(AppUser appUser);
         Task<IEnumerable<AppUser>> GetUsersAsync();
         Task<AppUser> GetUserByIdAsync(int id);
         Task<bool> UsernameExists(string username);

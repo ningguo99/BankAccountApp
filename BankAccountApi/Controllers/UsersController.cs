@@ -20,7 +20,7 @@ namespace BankAccountApi.Controllers
             _userRepository = userRepository;
         }
 
-        // GET: apis/users
+        // GET: api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnedUserDto>>> GetUsers()
         {
@@ -29,7 +29,7 @@ namespace BankAccountApi.Controllers
             return Ok(usersToReturn);
         }
 
-        // POST: apis/users
+        // POST: api/users
         [HttpPost]
         public async Task<ActionResult<ReturnedUserDto>> CreateUser(CreateUserDto createUserDto)
         {
@@ -63,5 +63,25 @@ namespace BankAccountApi.Controllers
             return Ok(sum);
         }
 
+        [HttpPut("{userId}/update-address")]
+        public async Task<ActionResult<ReturnedUserDto>> UpdateUserAddress(int userId, [FromBody] UpdateAddressDto updateAddressDto) {
+            var appUser = await _userRepository.GetUserByIdAsync(userId);
+            if (appUser.Address == null) {
+                appUser.Address = _mapper.Map<Address>(updateAddressDto);
+            } else {
+                appUser.Address.State = updateAddressDto.State;
+                appUser.Address.PostCode = updateAddressDto.PostCode;
+            }    
+            appUser.Address.ModifiedDate = DateTime.Now;
+            appUser.Address.AppUserId = userId;
+            var success = await _userRepository.UpdateAsync(appUser);
+            
+            if (success){
+                var returnedUser = _mapper.Map<ReturnedUserDto>(appUser);
+                return Ok(returnedUser.Address);
+            }
+            return BadRequest("Failed to update user's address");
+
+        }
     }
 }

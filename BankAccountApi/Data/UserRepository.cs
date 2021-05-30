@@ -32,13 +32,26 @@ namespace BankAccountApi.Data
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
             // return the user with with their accounts (eager loading)
-            return await _context.AppUsers.Include(user => user.BankAccounts).SingleOrDefaultAsync(user => user.Id == id);
+            return await _context.AppUsers
+            .Include(user => user.BankAccounts)
+            .Include(user => user.Address)
+            .SingleOrDefaultAsync(user => user.Id == id);
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
             // return all users with their accounts (eager loading)
-            return await _context.AppUsers.Include(user => user.BankAccounts).ToListAsync();
+            return await _context.AppUsers
+            .Include(user => user.BankAccounts)
+            .Include(user => user.Address)
+            .ToListAsync();
+        }
+
+        public async Task<bool> UpdateAsync(AppUser appUser)
+        {
+            _context.Entry(appUser).State = EntityState.Modified;
+            var success = await _context.SaveChangesAsync() > 0;
+            return success;
         }
 
         public async Task<bool> UsernameExists(string username)

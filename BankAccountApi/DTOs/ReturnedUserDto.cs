@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BankAccountApi.Entities;
 
 namespace BankAccountApi.DTOs
 {
@@ -12,5 +13,6 @@ namespace BankAccountApi.DTOs
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public ICollection<ReturnedBankAccountDto> BankAccounts { get; set; }
+        public ReturnedAddressDto Address { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace BankAccountApi.Controllers
             _userRepository = userRepository;
         }
 
-        // POST: apis/BankAccounts
+        // POST: api/BankAccounts
         [HttpPost]
         public async Task<ActionResult<ReturnedBankAccountDto>> CreateBankAccount(AddBankAccountDto addBankAccountDto)
         {
@@ -41,7 +41,7 @@ namespace BankAccountApi.Controllers
             return BadRequest("Failed to create account");
         }
 
-        // PUT: apis/BankAccounts/{accountId}/deposit
+        // PUT: api/BankAccounts/{accountId}/deposit
         [HttpPut("{accountId}/deposit")]
         public async Task<ActionResult> Deposit([FromQuery] double amount, int accountId)
         {
@@ -59,7 +59,7 @@ namespace BankAccountApi.Controllers
             return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
         }
 
-        // PUT: apis/BankAccounts/{accountId}/withdraw
+        // PUT: api/BankAccounts/{accountId}/withdraw
         [HttpPut("{accountId}/withdraw")]
         public async Task<ActionResult> Withdraw([FromQuery] double amount, int accountId)
         {
@@ -79,7 +79,7 @@ namespace BankAccountApi.Controllers
             return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
         }
 
-        // GET: apis/BankAccounts/{accountId}/balance
+        // GET: api/BankAccounts/{accountId}/balance
         [HttpGet("{accountId}/balance")]
         public async Task<ActionResult<double>> GetBalance(int accountId) {
             Request.Headers.TryGetValue("UserId", out var userId);

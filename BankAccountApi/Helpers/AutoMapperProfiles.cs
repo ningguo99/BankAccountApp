@@ -12,6 +12,8 @@ namespace BankAccountApi.Helpers
             CreateMap<CreateUserDto, AppUser>();
             CreateMap<BankAccount, ReturnedBankAccountDto>();
             CreateMap<AddBankAccountDto, BankAccount>();
+            CreateMap<UpdateAddressDto, Address>();
+            CreateMap<Address, ReturnedAddressDto>();
             
         }
     }
