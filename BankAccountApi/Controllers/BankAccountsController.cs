@@ -41,8 +41,8 @@ namespace BankAccountApi.Controllers
             return BadRequest("Failed to create account");
         }
 
-        // PUT: apis/BankAccount/deposit/{accountId}
-        [HttpPut("deposit/{accountId}")]
+        // PUT: apis/BankAccounts/{accountId}/deposit
+        [HttpPut("{accountId}/deposit")]
         public async Task<ActionResult> Deposit([FromQuery] double amount, int accountId)
         {
             Request.Headers.TryGetValue("UserId", out var userId);
@@ -56,11 +56,11 @@ namespace BankAccountApi.Controllers
             bankAccount.ModifiedDate = DateTime.Now;
 
             await _accountRepository.UpdateAsync(bankAccount);
-            return Ok();
+            return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
         }
 
-        // PUT: apis/BankAccount/withdraw/{accountId}
-        [HttpPut("withdraw/{accountId}")]
+        // PUT: apis/BankAccounts/{accountId}/withdraw
+        [HttpPut("{accountId}/withdraw")]
         public async Task<ActionResult> Withdraw([FromQuery] double amount, int accountId)
         {
             Request.Headers.TryGetValue("UserId", out var userId);
@@ -76,7 +76,19 @@ namespace BankAccountApi.Controllers
             bankAccount.ModifiedDate = DateTime.Now;
 
             await _accountRepository.UpdateAsync(bankAccount);
-            return Ok();
+            return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
+        }
+
+        // GET: apis/BankAccounts/{accountId}/balance
+        [HttpGet("{accountId}/balance")]
+        public async Task<ActionResult<double>> GetBalance(int accountId) {
+            Request.Headers.TryGetValue("UserId", out var userId);
+            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), accountId)))
+                return Unauthorized("You are not authorized to deposit to this account");
+            
+            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(accountId);
+
+            return Ok(bankAccount.Balance);
         }
     }
 }

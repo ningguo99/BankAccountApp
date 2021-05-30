@@ -29,8 +29,15 @@ namespace BankAccountApi.Data
             return true;
         }
 
+        public async Task<AppUser> GetUserByIdAsync(int id)
+        {
+            // return the user with with their accounts (eager loading)
+            return await _context.AppUsers.Include(user => user.BankAccounts).SingleOrDefaultAsync(user => user.Id == id);
+        }
+
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
+            // return all users with their accounts (eager loading)
             return await _context.AppUsers.Include(user => user.BankAccounts).ToListAsync();
         }
 

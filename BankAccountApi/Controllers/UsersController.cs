@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BankAccountApi.DTOs;
@@ -53,6 +54,13 @@ namespace BankAccountApi.Controllers
                 return Ok(returnedUser);
             }
             return BadRequest("Failed to create user");
+        }
+
+        [HttpGet("{userId}/total-balance")]
+        public async Task<ActionResult<double>> GetUserTotalBalance(int userId) {
+            var appUser = await _userRepository.GetUserByIdAsync(userId);
+            var sum = appUser.BankAccounts.Sum(x => x.Balance);
+            return Ok(sum);
         }
 
     }
