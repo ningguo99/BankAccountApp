@@ -9,5 +9,6 @@ namespace BankAccountApi.Interfaces
         Task<bool> CreateAsync(AppUser appUser);
         Task<IEnumerable<AppUser>> GetUsersAsync();
         Task<bool> UsernameExists(string username);
+        Task<bool> AccountBelongsToUser(int userId, int accountId);
     }
 }

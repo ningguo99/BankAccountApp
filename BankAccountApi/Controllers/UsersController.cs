@@ -12,13 +12,11 @@ namespace BankAccountApi.Controllers
     public class UsersController : BaseApiController
     {
         private readonly IUserRepository _userRepository;
-        private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
-        public UsersController(IUserRepository userRepository, IAccountRepository accountRepository, IMapper mapper)
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
             _mapper = mapper;
             _userRepository = userRepository;
-            _accountRepository = accountRepository;
         }
 
         // GET: apis/users
@@ -56,27 +54,6 @@ namespace BankAccountApi.Controllers
             }
             return BadRequest("Failed to create user");
         }
-
-        [HttpPost("add-bank-account")]
-        public async Task<ActionResult<AddBankAccountDto>> AddBankAccount(AddBankAccountDto addBankAccountDto)
-        {
-            // assume the user's Id will be included in the http header "UserId"
-            Request.Headers.TryGetValue("UserId", out var id);
-
-            var bankAccount = _mapper.Map<BankAccount>(addBankAccountDto);
-
-            bankAccount.AccountNumber = await _accountRepository.GenerateAccountNumber();
-            bankAccount.AppUserId = Int32.Parse(id);
-
-            var success = await _accountRepository.Create(bankAccount);
-            if (success) {
-                var ReturnedBankAccountDto = _mapper.Map<ReturnedBankAccountDto>(bankAccount);
-                return Ok(ReturnedBankAccountDto);
-            }
-            return BadRequest("Failed to create account");
-        }
-
-
 
     }
 }

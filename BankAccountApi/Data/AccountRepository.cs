@@ -21,11 +21,11 @@ namespace BankAccountApi.Data
             return await _context.BankAccounts.AnyAsync(account => account.AccountNumber == accountNumber);
         }
 
-        public async Task<bool> Create(BankAccount bankAccount)
+        public async Task<bool> CreateAsync(BankAccount bankAccount)
         {
             _context.Entry(bankAccount).State = EntityState.Added;
             var success = await _context.SaveChangesAsync() > 0;
-            return success;
+            return true;
         }
 
         public async Task<string> GenerateAccountNumber()
@@ -42,6 +42,18 @@ namespace BankAccountApi.Data
             } while (await AccountNumberExists(builder.ToString()));
 
             return builder.ToString();
+        }
+
+        public async Task<BankAccount> GetBankAccountByIdAsync(int id)
+        {
+            return await _context.BankAccounts.FindAsync(id);
+        }
+
+        public async Task<bool> UpdateAsync(BankAccount bankAccount)
+        {
+            _context.Entry(bankAccount).State = EntityState.Modified;
+            var success = await _context.SaveChangesAsync() > 0;
+            return success;
         }
     }
 }
