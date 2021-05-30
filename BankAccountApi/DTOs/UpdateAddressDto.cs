@@ -9,6 +9,7 @@ namespace BankAccountApi.DTOs
         [AuState]
         public string State { get; set; }
         [Required]
+        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "PostCode must be 4 digits.")]
         public string PostCode { get; set; }
     }
 }
