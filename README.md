@@ -6,7 +6,7 @@ Install Git and dotnet CLI if you haven't. Clone the repository and start the ap
 git clone https://github.com/ningguo99/BankAccountApp.git
 ```
 ```
-cd BankAccountApp
+cd BankAccountApp/BankAccountApi
 ```
 ```
 dotnet run
@@ -28,5 +28,5 @@ This project creates the following API:
 
 ## Assumptions & Explanations
 * Since user authentication is out of scope, an HTTP Header "UserId" will be included in the relevant APIs e.g. in `/api/BankAccounts/{id}/deposit` to check if the user has the permission to deposit to a specific bank account.
-* Any unhandled exceptions are catched in [`BankAccountApi/Middleware/ExceptionMiddleware.cs`](BankAccountApi/Middleware/ExceptionMiddleware.cs). All error logs can be found under [`BankAccountApi/logs`](BankAccountApi/logs).
+* Any unhandled exceptions are catched in [`BankAccountApi/Middleware/ExceptionMiddleware.cs`](BankAccountApi/Middleware/ExceptionMiddleware.cs). All error logs can be found under `BankAccountApi/logs`.
 * Address validation is performed in [`BankAccountApi/Helpers/AuStateAttribute.cs`](BankAccountApi/Helpers/AuStateAttribute.cs) and [`BankAccountApi/Helpers/AddressHelper.cs`](BankAccountApi/Helpers/AddressHelper.cs).
