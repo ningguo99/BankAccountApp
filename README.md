@@ -9,6 +9,9 @@ git clone https://github.com/ningguo99/BankAccountApp.git
 cd BankAccountApp/BankAccountApi
 ```
 ```
+dotnet dev-certs https --trust
+```
+```
 dotnet run
 ```
 Navigate to [https://localhost:5001/swagger/index.html](https://localhost:5001/swagger/index.html) to check all the APIs.
