@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BankAccountApi.Helpers
 {
     public class AddressHelper
     {
-        public static IDictionary<string, ICollection<string[]>> map { get; set; } = new Dictionary<string, ICollection<string[]>>() {
+        public static IDictionary<string, IList<string[]>> StatePostCodeMap { get; set; } = new Dictionary<string, IList<string[]>>() {
             {"NSW", new List<string[]>{
                 new string[]{"1000", "1999"},
                 new string[]{"2000", "2599"},
@@ -37,8 +38,15 @@ namespace BankAccountApi.Helpers
         };
         public static bool ValidStateWithPostCode(string state, string postCode)
         {
-
-            return true;
+            StatePostCodeMap.TryGetValue(state, out IList<string[]> postCodeList);
+            for (int i = 0; i < postCodeList.Count; i++) {
+                var from = postCodeList[i][0];
+                var to = postCodeList[i][1];
+                if (postCode.CompareTo(from) >= 0 && postCode.CompareTo(to) <= 0) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -41,17 +41,17 @@ namespace BankAccountApi.Controllers
             return BadRequest("Failed to create account");
         }
 
-        // PUT: api/BankAccounts/{accountId}/deposit
-        [HttpPut("{accountId}/deposit")]
-        public async Task<ActionResult> Deposit([FromQuery] double amount, int accountId)
+        // PUT: api/BankAccounts/{id}/deposit
+        [HttpPut("{id}/deposit")]
+        public async Task<ActionResult<ReturnedBankAccountDto>> Deposit([FromQuery] double amount, int id)
         {
             Request.Headers.TryGetValue("UserId", out var userId);
-            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), accountId)))
+            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), id)))
                 return Unauthorized("You are not authorized to deposit to this account");
             if (amount < 0)
                 return BadRequest("Deposit amount cannot be negative");
 
-            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(accountId);
+            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(id);
             bankAccount.Balance += amount;
             bankAccount.ModifiedDate = DateTime.Now;
 
@@ -59,17 +59,17 @@ namespace BankAccountApi.Controllers
             return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
         }
 
-        // PUT: api/BankAccounts/{accountId}/withdraw
-        [HttpPut("{accountId}/withdraw")]
-        public async Task<ActionResult> Withdraw([FromQuery] double amount, int accountId)
+        // PUT: api/BankAccounts/{id}/withdraw
+        [HttpPut("{id}/withdraw")]
+        public async Task<ActionResult<ReturnedBankAccountDto>> Withdraw([FromQuery] double amount, int id)
         {
             Request.Headers.TryGetValue("UserId", out var userId);
-            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), accountId)))
+            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), id)))
                 return Unauthorized("You are not authorized to deposit to this account");
             if (amount < 0)
                 return BadRequest("Withdraw amount cannot be negative");
 
-            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(accountId);
+            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(id);
             bankAccount.Balance -= amount;
             if (bankAccount.Balance < 0)
                 return BadRequest("Banlance must be greater than 0");
@@ -79,14 +79,14 @@ namespace BankAccountApi.Controllers
             return Ok(_mapper.Map<ReturnedBankAccountDto>(bankAccount));
         }
 
-        // GET: api/BankAccounts/{accountId}/balance
-        [HttpGet("{accountId}/balance")]
-        public async Task<ActionResult<double>> GetBalance(int accountId) {
+        // GET: api/BankAccounts/{id}/balance
+        [HttpGet("{id}/balance")]
+        public async Task<ActionResult<double>> GetBalance(int id) {
             Request.Headers.TryGetValue("UserId", out var userId);
-            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), accountId)))
+            if (!(await _userRepository.AccountBelongsToUser(Int32.Parse(userId), id)))
                 return Unauthorized("You are not authorized to deposit to this account");
             
-            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(accountId);
+            var bankAccount = await _accountRepository.GetBankAccountByIdAsync(id);
 
             return Ok(bankAccount.Balance);
         }

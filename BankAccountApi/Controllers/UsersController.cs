@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BankAccountApi.DTOs;
 using BankAccountApi.Entities;
+using BankAccountApi.Helpers;
 using BankAccountApi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,10 @@ namespace BankAccountApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnedUserDto>>> GetUsers()
         {
+            // check if the user is an admin
+            Request.Headers.TryGetValue("Username", out var username);
+            if (username != "Admin")
+                return Unauthorized("Only admin can create a user");
             var appUsers = await _userRepository.GetUsersAsync();
             var usersToReturn = _mapper.Map<IEnumerable<ReturnedUserDto>>(appUsers);
             return Ok(usersToReturn);
@@ -56,27 +61,44 @@ namespace BankAccountApi.Controllers
             return BadRequest("Failed to create user");
         }
 
-        [HttpGet("{userId}/total-balance")]
-        public async Task<ActionResult<double>> GetUserTotalBalance(int userId) {
-            var appUser = await _userRepository.GetUserByIdAsync(userId);
+        [HttpGet("{id}/total-balance")]
+        public async Task<ActionResult<double>> GetUserTotalBalance(int id)
+        {
+            Request.Headers.TryGetValue("UserId", out var userId);
+            if (Int32.Parse(userId) != id)
+                return Unauthorized("You are not authorized to view this user's total balance");
+
+            var appUser = await _userRepository.GetUserByIdAsync(id);
             var sum = appUser.BankAccounts.Sum(x => x.Balance);
             return Ok(sum);
         }
 
-        [HttpPut("{userId}/update-address")]
-        public async Task<ActionResult<ReturnedUserDto>> UpdateUserAddress(int userId, [FromBody] UpdateAddressDto updateAddressDto) {
-            var appUser = await _userRepository.GetUserByIdAsync(userId);
-            if (appUser.Address == null) {
+        [HttpPut("{id}/update-address")]
+        public async Task<ActionResult<ReturnedUserDto>> UpdateUserAddress(int id, [FromBody] UpdateAddressDto updateAddressDto)
+        {
+            Request.Headers.TryGetValue("UserId", out var userId);
+            if (Int32.Parse(userId) != id)
+                return Unauthorized("You are not authorized to view this user's total balance");
+
+            var appUser = await _userRepository.GetUserByIdAsync(id);
+            if (!AddressHelper.ValidStateWithPostCode(updateAddressDto.State, updateAddressDto.PostCode))
+                return BadRequest("The state and postcode don't match");
+
+            if (appUser.Address == null)
+            {
                 appUser.Address = _mapper.Map<Address>(updateAddressDto);
-            } else {
+            }
+            else
+            {
                 appUser.Address.State = updateAddressDto.State;
                 appUser.Address.PostCode = updateAddressDto.PostCode;
-            }    
+            }
             appUser.Address.ModifiedDate = DateTime.Now;
-            appUser.Address.AppUserId = userId;
+            appUser.Address.AppUserId = id;
             var success = await _userRepository.UpdateAsync(appUser);
-            
-            if (success){
+
+            if (success)
+            {
                 var returnedUser = _mapper.Map<ReturnedUserDto>(appUser);
                 return Ok(returnedUser.Address);
             }
