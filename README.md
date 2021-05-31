@@ -11,7 +11,7 @@ cd BankAccountApp/BankAccountApi
 ```
 dotnet run
 ```
-Navigate to `https://localhost:5001/swagger/index.html` to check all the APIs.
+Navigate to [https://localhost:5001/swagger/index.html](https://localhost:5001/swagger/index.html) to check all the APIs.
 
 ## Overview
 This project creates the following API:
