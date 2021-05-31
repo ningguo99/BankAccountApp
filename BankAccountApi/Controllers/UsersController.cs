@@ -28,7 +28,7 @@ namespace BankAccountApi.Controllers
             // check if the user is an admin
             Request.Headers.TryGetValue("Username", out var username);
             if (username != "Admin")
-                return Unauthorized("Only admin can create a user");
+                return Unauthorized("Only admin can view all users");
             var appUsers = await _userRepository.GetUsersAsync();
             var usersToReturn = _mapper.Map<IEnumerable<ReturnedUserDto>>(appUsers);
             return Ok(usersToReturn);
